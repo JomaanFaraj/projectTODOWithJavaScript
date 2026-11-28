@@ -2,7 +2,8 @@ let input = document.querySelector(".input");
 let submit = document.querySelector(".add");
 let tasksDiv = document.querySelector(".tasks");
 let deleteAll = document.getElementById("delAll");
-
+let searchInput = document.querySelector(".search");
+let descriptionInput = document.querySelector(".description");
 let arrayOfTasks = [];
 
 // Check If Theres Tasks In Local Storage
@@ -15,72 +16,125 @@ getDataFromLocalStorage();
 
 
 tasksDiv.addEventListener("click", (e) => {
-  if (e.target.classList.contains("del")) {
-    deleteTaskWith(e.target.parentElement.getAttribute("data-id"));
-    e.target.parentElement.remove();  
-  }
+
+    // Delete Task
+    if (e.target.classList.contains("del")) {
+
+        if(confirm("Do you want to delete this task?")) {
+
+            deleteTaskWith(
+                e.target.parentElement.getAttribute("data-id")
+            );
+
+            e.target.parentElement.remove();
+
+            isShowdeleteAll();
+
+        }
+
+        return;
+    }
 
     // Toggle Task Status
-  if (e.target.classList.contains("task")) {
-    toggleStatusTaskWith(e.target.getAttribute("data-id"));
-    e.target.classList.toggle("done"); 
-  }
-}
-);
+    let taskElement = e.target.closest(".task");
+
+    if(taskElement) {
+
+        toggleStatusTaskWith(
+            taskElement.getAttribute("data-id")
+        );
+
+        taskElement.classList.toggle("done");
+
+    }
+
+});
 
 // Add Task
 submit.onclick = function () {
-  if (input.value !== "") {
-    addTaskToArray(input.value);
+  if (input.value.trim() !== "") {
+
+    addTaskToArray(input.value, descriptionInput.value);
+
     input.value = "";
-   
+    descriptionInput.value = "";
+    searchInput.value = "";
+
   }
 };
 
-function addTaskToArray(taskText) {
-  // Task Data
-  const task = {
-    id: Date.now(),
-    title: taskText,
-    completed: false,
-  };
+function addTaskToArray(taskText, taskDescription) {
 
+    // Task Data
+    const task = {
+        id: Date.now(),
+        title: taskText,
+        description: taskDescription,
+        completed: false,
+    };
 
     // Push Task To Array
     arrayOfTasks.push(task);
-    // Add Tasks To Page
-      deleteAll.style.display='block';
 
+    // Add Tasks To Page
     addElementsToPageFrom();
+
+    isShowdeleteAll();
+
     addDataToLocalStorageFrom();
 }
 function addElementsToPageFrom()
 {
-    tasksDiv.innerHTML="";
-    arrayOfTasks.forEach((task)=>{
-        //create div 
-        let div =document.createElement("div");
-        div.className="task";
+    tasksDiv.innerHTML = "";
+
+    arrayOfTasks.forEach((task) => {
+
+        // Create Main Task Div
+        let div = document.createElement("div");
+        div.className = "task";
 
         if (task.completed)
         {
-            div.className="task done";
+            div.className = "task done";
         }
-        div.setAttribute("data-id",task.id);
-        div.appendChild(document.createTextNode(task.title));
-        //create button
-        let deleteButton  = document.createElement("span");
-        deleteButton .className="del";
-        deleteButton.appendChild(document.createTextNode("Delete"));
-         div.appendChild(deleteButton );
 
+        div.setAttribute("data-id", task.id);
 
-         //add div task to tasksDiv main
-         tasksDiv.appendChild(div);
+        // Create Task Content
+        let contentDiv = document.createElement("div");
+        contentDiv.className = "task-content";
 
-    }
+        // Create Task Title
+        let title = document.createElement("span");
+        title.className = "task-title";
+        title.textContent = task.title;
 
-    );
+        contentDiv.appendChild(title);
+
+        // Create Task Description
+        if (task.description && task.description.trim() !== "")
+        {
+            let description = document.createElement("p");
+            description.className = "task-description";
+            description.textContent = task.description;
+
+            contentDiv.appendChild(description);
+        }
+
+        div.appendChild(contentDiv);
+
+        // Create Delete Button
+        let deleteButton = document.createElement("span");
+        deleteButton.className = "del";
+        deleteButton.textContent = "Delete";
+
+        div.appendChild(deleteButton);
+
+        // Add Task To Tasks Div
+        tasksDiv.appendChild(div);
+
+    });
+
 }
 function addDataToLocalStorageFrom() {
   window.localStorage.setItem("tasks", JSON.stringify(arrayOfTasks));
@@ -90,14 +144,14 @@ function getDataFromLocalStorage() {
 
   //if (data) 
   if(arrayOfTasks.length > 0){
-    deleteAll.style.display='block';
+    
     addElementsToPageFrom();
   }
-  else 
-  {
-    tasksDiv.innerHTML="soory... Not found any think (:";
-    deleteAll.style.display='none';
-  }
+   
+  
+    isShowdeleteAll();
+   
+  
   
 }
 function deleteTaskWith(taskid)
@@ -107,15 +161,8 @@ function deleteTaskWith(taskid)
 }
 
 function toggleStatusTaskWith(taskid)
-{
-//   arrayOfTasks=arrayOfTasks.map((task) =>{
-//         if (task.id == taskid)
-//         {
-//           task.completed ? false : true ;
-//         }
-//   }
-   
-// );
+{   
+
 for(let i=0; i<arrayOfTasks.length ; i++)
 {
   if(arrayOfTasks[i].id == taskid)
@@ -127,8 +174,48 @@ for(let i=0; i<arrayOfTasks.length ; i++)
 }
 deleteAll.onclick=function()
 {
-  tasksDiv.innerHTML="";
+  if(confirm("Do you want to delete all files?"))
+  {
   localStorage.clear();
   arrayOfTasks.splice(0);
-  getDataFromLocalStorage();
+  isShowdeleteAll();
+  }
+  
+
+
 }
+function isShowdeleteAll()
+{
+  if(arrayOfTasks.length > 0)
+  {
+    deleteAll.style.display = 'block';
+    searchInput.style.display = 'block';
+  }
+  else
+  {
+    tasksDiv.innerHTML = "No tasks found. Add a new task to get started!";
+    deleteAll.style.display = 'none';
+    searchInput.style.display = 'none';
+  }
+}
+// Search Tasks
+searchInput.addEventListener("input", function () {
+
+    let searchValue = searchInput.value.toLowerCase();
+
+    let tasks = document.querySelectorAll(".tasks .task");
+
+    tasks.forEach((task) => {
+
+        let taskTitle = task.firstChild.textContent.toLowerCase();
+
+        if (taskTitle.includes(searchValue)) {
+            task.style.display = "flex";
+        }
+        else {
+            task.style.display = "none";
+        }
+
+    });
+
+});

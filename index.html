@@ -1,25 +1,102 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Learn JavaScript</title>
+    <title>TaskFlow | Manage Your Tasks</title>
     <link rel="stylesheet" href="index.css" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="form">
-        <input type="text" class="input" />
-        <input type="submit" class="add" value="Add Task" />
-      </div>
-      <span id="delAll">delele All</span>
-      <div class="tasks">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
 
-      </div>
+<body>
+
+    <div class="container">
+
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">✓</div>
+                <span>TaskFlow</span>
+            </div>
+
+            <div class="header-badge">
+                <span class="status-dot"></span>
+                Stay Productive
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="welcome">
+                <span class="welcome-label">YOUR PERSONAL WORKSPACE</span>
+                <h1>Manage your tasks</h1>
+                <p>Organize your day, stay focused, and get things done.</p>
+            </div>
+
+            <section class="task-card">
+
+                <div class="card-header">
+                    <div>
+                        <h2>My Tasks</h2>
+                        <p>Your productivity starts here</p>
+                    </div>
+
+                </div>
+
+                   <div class="form">
+
+    <input
+        type="text"
+        class="input"
+        placeholder="What needs to be done?"
+        autocomplete="off"
+    />
+
+    <textarea
+        class="description"
+        placeholder="Add a description (optional)..."
+        rows="3"
+    ></textarea>
+
+    <input
+        type="submit"
+        class="add"
+        value="+ Add Task"
+    />
+
+                  </div>
+
+                <div class="list-header">
+                    <span>YOUR TASK LIST</span>
+                </div>
+                <!-- مربع البحث الجديد -->
+                <input
+                  type="text"
+                  class="search"
+                  placeholder="🔍 Search your tasks..."
+                  />
+
+<span id="delAll">Delete All</span>
+
+
+                <span id="delAll">Delete All Tasks</span>
+
+                <div class="tasks">
+                </div>
+
+            </section>
+
+            <footer class="footer">
+                <span>TaskFlow © 2026</span>
+            </footer>
+
+        </main>
+
     </div>
 
     <script src="index.js"></script>
-  </body>
+
+</body>
 </html>
